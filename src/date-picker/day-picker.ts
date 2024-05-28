@@ -1,6 +1,5 @@
 import {
-  DateJson,
-  dateToJson,
+  dateIsEqualsWeight,
   getDateWeight,
   getDaysOfMonth
 } from '@rolster/helpers-date';
@@ -8,8 +7,9 @@ import {
 const DAYS_WEEK = 7;
 
 interface DayPickerProps {
+  date: Date;
+  day: number;
   month: number;
-  value: number;
   year: number;
   minDate?: Date;
   maxDate?: Date;
@@ -27,10 +27,12 @@ export interface WeekState {
 }
 
 function createDayState(props: DayPickerProps, value?: number): DayState {
+  const { date, month, year } = props;
+
   return {
     disabled: dayIsOutside(props, value || 0),
     forbidden: !value,
-    selected: value === props.value,
+    selected: !!value && dateIsEqualsWeight(date, new Date(year, month, value)),
     value
   };
 }
@@ -86,7 +88,7 @@ function createNextWeeks(props: DayPickerProps, date: Date): WeekState[] {
     }
   } while (day <= daysMonth);
 
-  if (days.length < DAYS_WEEK) {
+  if (days.length && days.length < DAYS_WEEK) {
     weeks.push({ days: [...days, ...createDaysPending(props, days.length)] });
   }
 
@@ -113,16 +115,13 @@ export function dayIsOutside(props: DayPickerProps, day: number): boolean {
   return dayIsOutsideMin(props, day) || dayIsOutsideMax(props, day);
 }
 
-export function createDayOutside(
-  props: DayPickerProps,
-  day: number
-): Undefined<DateJson> {
-  const { maxDate, minDate } = props;
+export function checkDayPicker(props: DayPickerProps): Undefined<number> {
+  const { day, maxDate, minDate } = props;
 
   return minDate && dayIsOutsideMin(props, day)
-    ? dateToJson(minDate)
+    ? minDate.getDate()
     : maxDate && dayIsOutsideMax(props, day)
-      ? dateToJson(maxDate)
+      ? maxDate.getDate()
       : undefined;
 }
 
