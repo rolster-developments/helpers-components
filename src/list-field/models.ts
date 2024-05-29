@@ -40,6 +40,22 @@ export type StoreAutocompleteNull<
   E extends AbstractAutocompleteElement<T> = AbstractAutocompleteElement<T>
 > = StoreAutocomplete<T, E> | null;
 
+export class RolsterElement<T = unknown> implements ListElement<T> {
+  constructor(public readonly value: T) {}
+
+  public get description(): string {
+    return String(this.value);
+  }
+
+  public get title(): string {
+    return String(this.value);
+  }
+
+  public compareTo(value: T): boolean {
+    return value === this.value;
+  }
+}
+
 export class ListCollection<T = unknown> {
   constructor(public readonly value: AbstractListElement<T>[]) {}
 
