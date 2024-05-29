@@ -1,24 +1,11 @@
-const COUNT_YEAR_RANGE = 4;
+import { COUNT_YEAR_RANGE } from './constants';
+import { YearPickerTemplate, YearState } from './models';
 
 interface YearPickerProps {
   date: Date;
   year: number;
   minDate?: Date;
   maxDate?: Date;
-}
-
-export interface YearState {
-  value?: number;
-  disabled: boolean;
-  selected: boolean;
-}
-
-interface YearPickerTemplate {
-  canNext: boolean;
-  canPrevious: boolean;
-  maxRange: number;
-  minRange: number;
-  years: YearState[];
 }
 
 function createYear(props: YearPickerProps, value?: number): YearState {

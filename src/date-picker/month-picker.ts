@@ -1,5 +1,6 @@
 import { itIsDefined } from '@rolster/helpers-advanced';
 import { MONTH_NAMES, Month } from '@rolster/helpers-date';
+import { MonthLimitTemplate, MonthState } from './models';
 
 interface MonthPickerProps {
   date: Date;
@@ -14,18 +15,6 @@ interface MonthLimitProps {
   date?: Date;
   maxDate?: Date;
   minDate?: Date;
-}
-
-export interface MonthState {
-  value: number;
-  label: string;
-  disabled: boolean;
-  selected: boolean;
-}
-
-export interface MonthLimitTemplate {
-  limitNext: boolean;
-  limitPrevious: boolean;
 }
 
 function createMonthState(props: MonthPickerProps, value: number): MonthState {

@@ -3,8 +3,8 @@ import {
   getDateWeight,
   getDaysOfMonth
 } from '@rolster/helpers-date';
-
-const DAYS_WEEK = 7;
+import { DAYS_WEEK } from './constants';
+import { DayState, WeekState } from './models';
 
 interface DayPickerProps {
   date: Date;
@@ -13,17 +13,6 @@ interface DayPickerProps {
   year: number;
   minDate?: Date;
   maxDate?: Date;
-}
-
-export interface DayState {
-  disabled: boolean;
-  forbidden: boolean;
-  selected: boolean;
-  value?: number;
-}
-
-export interface WeekState {
-  days: DayState[];
 }
 
 function createDayState(props: DayPickerProps, value?: number): DayState {

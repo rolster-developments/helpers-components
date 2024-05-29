@@ -5,28 +5,15 @@ import {
   getDateWeight,
   getDaysOfMonth
 } from '@rolster/helpers-date';
+import { DayRangeState, WeekRangeState } from './models';
+import { DAYS_WEEK } from './constants';
 
-const DAYS_WEEK = 7;
-
-interface RangePickerProps {
+interface DayRangePickerProps {
   date: Date;
   range: DateRange;
   sourceDate: Date;
   minDate?: Date;
   maxDate?: Date;
-}
-
-export interface DayRangeState {
-  disabled: boolean;
-  end: boolean;
-  forbidden: boolean;
-  source: boolean;
-  ranged: boolean;
-  value?: number;
-}
-
-export interface WeekRangeState {
-  days: DayRangeState[];
 }
 
 function dateIsSelected(base: Date, date: Date, day: number): boolean {
@@ -38,7 +25,7 @@ function dateIsSelected(base: Date, date: Date, day: number): boolean {
 }
 
 function sourceIsSelected(
-  { sourceDate }: RangePickerProps,
+  { sourceDate }: DayRangePickerProps,
   base: Date,
   day: number
 ): boolean {
@@ -46,7 +33,7 @@ function sourceIsSelected(
 }
 
 function rangeIsSelected(
-  { range }: RangePickerProps,
+  { range }: DayRangePickerProps,
   base: Date,
   day: number
 ): boolean {
@@ -57,7 +44,7 @@ function rangeIsSelected(
 }
 
 function dayIsRange(
-  { range }: RangePickerProps,
+  { range }: DayRangePickerProps,
   base: Date,
   day: number
 ): boolean {
@@ -69,12 +56,12 @@ function dayIsRange(
 }
 
 function createDayRangeState(
-  props: RangePickerProps,
+  props: DayRangePickerProps,
   base: Date,
   day?: number
 ): DayRangeState {
   return {
-    disabled: rangeIsOutside(props, day || 0),
+    disabled: dayRangeIsOutside(props, day || 0),
     end: day ? rangeIsSelected(props, base, day) : false,
     forbidden: !day,
     ranged: day ? dayIsRange(props, base, day) : false,
@@ -83,7 +70,10 @@ function createDayRangeState(
   };
 }
 
-function createFirstWeek(props: RangePickerProps, base: Date): WeekRangeState {
+function createFirstWeek(
+  props: DayRangePickerProps,
+  base: Date
+): WeekRangeState {
   const days: DayRangeState[] = [];
 
   let day = 1;
@@ -102,7 +92,7 @@ function createFirstWeek(props: RangePickerProps, base: Date): WeekRangeState {
 }
 
 function createDaysPending(
-  props: RangePickerProps,
+  props: DayRangePickerProps,
   base: Date,
   days: number
 ): DayRangeState[] {
@@ -117,7 +107,7 @@ function createDaysPending(
 }
 
 function createNextWeeks(
-  props: RangePickerProps,
+  props: DayRangePickerProps,
   base: Date
 ): WeekRangeState[] {
   const weeks: WeekRangeState[] = [];
@@ -127,7 +117,7 @@ function createNextWeeks(
 
   let days: DayRangeState[] = [];
   let countDays = 1;
-  let day = 8 - base.getDay();
+  let day = DAYS_WEEK - base.getDay() + 1;
 
   do {
     days.push(createDayRangeState(props, date, day));
@@ -152,8 +142,8 @@ function createNextWeeks(
   return weeks;
 }
 
-export function rangeIsOutsideMin(
-  props: RangePickerProps,
+export function dayRangeIsOutsideMin(
+  props: DayRangePickerProps,
   day: number
 ): boolean {
   const { date, minDate } = props;
@@ -163,8 +153,8 @@ export function rangeIsOutsideMin(
     : false;
 }
 
-export function rangeIsOutsideMax(
-  props: RangePickerProps,
+export function dayRangeIsOutsideMax(
+  props: DayRangePickerProps,
   day: number
 ): boolean {
   const { date, maxDate } = props;
@@ -174,11 +164,14 @@ export function rangeIsOutsideMax(
     : false;
 }
 
-export function rangeIsOutside(props: RangePickerProps, day: number): boolean {
-  return rangeIsOutsideMin(props, day) || rangeIsOutsideMax(props, day);
+export function dayRangeIsOutside(
+  props: DayRangePickerProps,
+  day: number
+): boolean {
+  return dayRangeIsOutsideMin(props, day) || dayRangeIsOutsideMax(props, day);
 }
 
-export function createRangePicker(props: RangePickerProps) {
+export function createDayRangePicker(props: DayRangePickerProps) {
   const date = new Date(props.date.getFullYear(), props.date.getMonth(), 1);
 
   const firstWeek = createFirstWeek(props, date);
