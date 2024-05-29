@@ -37,17 +37,6 @@ function createDayState(props: DayPickerProps, value?: number): DayState {
   };
 }
 
-function createDaysPending(props: DayPickerProps, days: number): DayState[] {
-  const daysPending: DayState[] = [];
-  const length = 7 - days;
-
-  for (let index = 0; index < length; index++) {
-    daysPending.push(createDayState(props));
-  }
-
-  return daysPending;
-}
-
 function createFirstWeek(props: DayPickerProps, date: Date): WeekState {
   const days: DayState[] = [];
 
@@ -64,6 +53,17 @@ function createFirstWeek(props: DayPickerProps, date: Date): WeekState {
   }
 
   return { days };
+}
+
+function createDaysPending(props: DayPickerProps, days: number): DayState[] {
+  const daysPending: DayState[] = [];
+  const length = 7 - days;
+
+  for (let index = 0; index < length; index++) {
+    daysPending.push(createDayState(props));
+  }
+
+  return daysPending;
 }
 
 function createNextWeeks(props: DayPickerProps, date: Date): WeekState[] {
