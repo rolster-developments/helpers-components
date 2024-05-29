@@ -1,3 +1,5 @@
+import { hasPattern } from '@rolster/helpers-string';
+
 export interface AbstractListElement<T = unknown> {
   description: string;
   value: T;
@@ -40,7 +42,7 @@ export type StoreAutocompleteNull<
   E extends AbstractAutocompleteElement<T> = AbstractAutocompleteElement<T>
 > = StoreAutocomplete<T, E> | null;
 
-export class RolsterElement<T = unknown> implements ListElement<T> {
+export class RolsterListElement<T = unknown> implements ListElement<T> {
   constructor(public readonly value: T) {}
 
   public get description(): string {
@@ -53,6 +55,15 @@ export class RolsterElement<T = unknown> implements ListElement<T> {
 
   public compareTo(value: T): boolean {
     return value === this.value;
+  }
+}
+
+export class RolsterAutocompleteElement<T = unknown>
+  extends RolsterListElement<T>
+  implements AutocompleteElement<T>
+{
+  public hasCoincidence(pattern: string): boolean {
+    return hasPattern(JSON.stringify(this.value), pattern, true);
   }
 }
 
