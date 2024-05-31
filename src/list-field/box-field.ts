@@ -6,6 +6,7 @@ type InputElement = Nulleable<HTMLInputElement>;
 type ListElement = Nulleable<HTMLUListElement>;
 
 interface NavigationInputProps {
+  contentElement: ContentElement;
   event: KeyboardEvent;
   listElement: ListElement;
 }
@@ -32,7 +33,13 @@ export function locationListIsBottom(
   return true;
 }
 
-function navigationInputDown(listElement: ListElement): number {
+function navigationInputDown(props: NavigationInputProps): Undefined<number> {
+  const { contentElement, listElement } = props;
+
+  if (!locationListIsBottom(contentElement, listElement)) {
+    return undefined;
+  }
+
   const elements = listElement?.querySelectorAll<HTMLLIElement>(classElement);
 
   if (elements?.length) {
@@ -43,14 +50,20 @@ function navigationInputDown(listElement: ListElement): number {
     }, 100);
   }
 
-  return 0;
+  return POSITION_INITIAL;
 }
 
-function navigationInputUp(listElement: ListElement): number {
+function navigationInputUp(props: NavigationInputProps): Undefined<number> {
+  const { contentElement, listElement } = props;
+
+  if (locationListIsBottom(contentElement, listElement)) {
+    return undefined;
+  }
+
   const elements = listElement?.querySelectorAll<HTMLLIElement>(classElement);
 
   if (!elements?.length) {
-    return 0;
+    return POSITION_INITIAL;
   }
 
   const position = elements.length - 1;
@@ -108,16 +121,16 @@ function navigationElementUp(props: NavigationElementProps): number {
   return POSITION_INITIAL;
 }
 
-export function listNavigationInput(props: NavigationInputProps): number {
-  const { event, listElement } = props;
-
-  switch (event.code) {
+export function listNavigationInput(
+  props: NavigationInputProps
+): Undefined<number> {
+  switch (props.event.code) {
     case 'ArrowDown':
-      return navigationInputDown(listElement);
+      return navigationInputDown(props);
     case 'ArrowUp':
-      return navigationInputUp(listElement);
+      return navigationInputUp(props);
     default:
-      return POSITION_INITIAL;
+      return undefined;
   }
 }
 

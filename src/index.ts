@@ -1,3 +1,4 @@
+export * from './date-picker/date-picker';
 export * from './date-picker/day-picker';
 export * from './date-picker/day-range-picker';
 export * from './date-picker/models';
