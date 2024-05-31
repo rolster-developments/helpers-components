@@ -1,4 +1,9 @@
-import { dateIsAfter, dateIsBefore } from '@rolster/helpers-date';
+import {
+  dateIsAfter,
+  dateIsBefore,
+  normalizeMaxTime,
+  normalizeMinTime
+} from '@rolster/helpers-date';
 
 interface DateRangeProps {
   date: Date;
@@ -6,11 +11,28 @@ interface DateRangeProps {
   minDate?: Date;
 }
 
+export function dateIsOutRangeMin(props: DateRangeProps): boolean {
+  const { date, minDate } = props;
+
+  return !!minDate && dateIsBefore(normalizeMinTime(minDate), date);
+}
+
+export function dateIsOutRangeMax(props: DateRangeProps): boolean {
+  const { date, maxDate } = props;
+
+  return !!maxDate && dateIsAfter(normalizeMaxTime(maxDate), date);
+}
+
 export function dateOutRange(props: DateRangeProps): boolean {
+  return dateIsOutRangeMin(props) || dateIsOutRangeMax(props);
+}
+
+export function checkDateRange(props: DateRangeProps): Date {
   const { date, maxDate, minDate } = props;
 
-  return (
-    (!!minDate && dateIsBefore(minDate, date)) ||
-    (!!maxDate && dateIsAfter(maxDate, date))
-  );
+  return minDate && dateIsOutRangeMax(props)
+    ? minDate
+    : maxDate && dateIsOutRangeMax(props)
+      ? maxDate
+      : date;
 }
