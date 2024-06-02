@@ -1,7 +1,9 @@
 export interface DayState {
   disabled: boolean;
+  focused: boolean;
   forbidden: boolean;
   selected: boolean;
+  today: boolean;
   value?: number;
 }
 

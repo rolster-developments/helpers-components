@@ -15,28 +15,40 @@ interface DayPickerProps {
   maxDate?: Date;
 }
 
-function createDayState(props: DayPickerProps, value?: number): DayState {
-  const { date, month, year } = props;
+function createDayState(
+  props: DayPickerProps,
+  today: Date,
+  value?: number
+): DayState {
+  const { date, day, month, year } = props;
+
+  const dateValue = value && new Date(year, month, value);
 
   return {
     disabled: dayIsOutside(props, value || 0),
+    focused: !!value && day === value,
     forbidden: !value,
-    selected: !!value && dateIsEqualsWeight(date, new Date(year, month, value)),
+    selected: !!dateValue && dateIsEqualsWeight(date, dateValue),
+    today: !!dateValue && dateIsEqualsWeight(today, dateValue),
     value
   };
 }
 
-function createFirstWeek(props: DayPickerProps, date: Date): WeekState {
+function createFirstWeek(
+  props: DayPickerProps,
+  date: Date,
+  today: Date
+): WeekState {
   const days: DayState[] = [];
 
   let day = 1;
 
   for (let start = 0; start < date.getDay(); start++) {
-    days.push(createDayState(props));
+    days.push(createDayState(props, today));
   }
 
   for (let end = date.getDay(); end < 7; end++) {
-    days.push(createDayState(props, day));
+    days.push(createDayState(props, today, day));
 
     day++;
   }
@@ -44,18 +56,26 @@ function createFirstWeek(props: DayPickerProps, date: Date): WeekState {
   return { days };
 }
 
-function createDaysPending(props: DayPickerProps, days: number): DayState[] {
+function createDaysPending(
+  props: DayPickerProps,
+  today: Date,
+  days: number
+): DayState[] {
   const daysPending: DayState[] = [];
   const length = 7 - days;
 
   for (let index = 0; index < length; index++) {
-    daysPending.push(createDayState(props));
+    daysPending.push(createDayState(props, today));
   }
 
   return daysPending;
 }
 
-function createNextWeeks(props: DayPickerProps, date: Date): WeekState[] {
+function createNextWeeks(
+  props: DayPickerProps,
+  date: Date,
+  today: Date
+): WeekState[] {
   const daysMonth = getDaysOfMonth(date.getFullYear(), date.getMonth());
   const weeks: WeekState[] = [];
 
@@ -64,7 +84,7 @@ function createNextWeeks(props: DayPickerProps, date: Date): WeekState[] {
   let day = DAYS_WEEK - date.getDay() + 1;
 
   do {
-    days.push(createDayState(props, day));
+    days.push(createDayState(props, today, day));
 
     day++;
     countDays++;
@@ -78,7 +98,9 @@ function createNextWeeks(props: DayPickerProps, date: Date): WeekState[] {
   } while (day <= daysMonth);
 
   if (days.length && days.length < DAYS_WEEK) {
-    weeks.push({ days: [...days, ...createDaysPending(props, days.length)] });
+    weeks.push({
+      days: [...days, ...createDaysPending(props, today, days.length)]
+    });
   }
 
   return weeks;
@@ -116,9 +138,10 @@ export function checkDayPicker(props: DayPickerProps): Undefined<number> {
 
 export function createDayPicker(props: DayPickerProps) {
   const date = new Date(props.year, props.month, 1);
+  const today = new Date();
 
-  const firstWeek = createFirstWeek(props, date);
-  const nextWeeks = createNextWeeks(props, date);
+  const firstWeek = createFirstWeek(props, date, today);
+  const nextWeeks = createNextWeeks(props, date, today);
 
   return [firstWeek, ...nextWeeks];
 }
