@@ -28,6 +28,7 @@ export interface MonthState {
   value: number;
   label: string;
   disabled: boolean;
+  focused: boolean;
   selected: boolean;
 }
 
@@ -39,6 +40,7 @@ export interface MonthLimitTemplate {
 export interface YearState {
   value?: number;
   disabled: boolean;
+  focused: boolean;
   selected: boolean;
 }
 

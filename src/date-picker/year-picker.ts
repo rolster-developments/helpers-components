@@ -9,10 +9,13 @@ interface YearPickerProps {
 }
 
 function createYear(props: YearPickerProps, value?: number): YearState {
+  const { date, year } = props;
+
   return {
-    value,
     disabled: !value,
-    selected: value === props.date.getFullYear()
+    focused: value === year,
+    selected: value === date.getFullYear(),
+    value
   };
 }
 
