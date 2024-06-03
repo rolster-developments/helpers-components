@@ -55,7 +55,7 @@ export function createYearPicker(props: YearPickerProps): YearPickerTemplate {
   let maxRange = year;
 
   const minYear = minDate?.getFullYear() || 0;
-  const maxYear = maxDate?.getFullYear() || 0;
+  const maxYear = maxDate?.getFullYear() || 10000;
 
   for (let index = 0; index < COUNT_YEAR_RANGE; index++) {
     const prevValue = year - COUNT_YEAR_RANGE + index;

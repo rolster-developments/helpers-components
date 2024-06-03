@@ -21,10 +21,10 @@ function createMonthState(props: MonthPickerProps, value: number): MonthState {
   const { date, month, year } = props;
 
   return {
-    label: MONTH_NAMES()[value],
     disabled: monthIsOutside(props, value),
     focused: value === month,
-    selected: date.getFullYear() === year && value === month,
+    label: MONTH_NAMES()[value],
+    selected: date.getFullYear() === year && value === date.getMonth(),
     value
   };
 }
