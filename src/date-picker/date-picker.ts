@@ -5,7 +5,7 @@ import {
   normalizeMinTime
 } from '@rolster/helpers-date';
 
-interface DateRangeProps {
+export interface DateRangeProps {
   date: Date;
   maxDate?: Date;
   minDate?: Date;

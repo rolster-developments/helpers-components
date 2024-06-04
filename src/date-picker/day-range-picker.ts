@@ -8,7 +8,7 @@ import {
 import { DayRangeState, WeekRangeState } from './models';
 import { DAYS_WEEK } from './constants';
 
-interface DayRangePickerProps {
+export interface DayRangePickerProps {
   date: Date;
   range: DateRange;
   sourceDate: Date;

@@ -2,7 +2,7 @@ import { itIsDefined } from '@rolster/helpers-advanced';
 import { MONTH_NAMES, Month } from '@rolster/helpers-date';
 import { MonthLimitTemplate, MonthState } from './models';
 
-interface MonthPickerProps {
+export interface MonthPickerProps {
   date: Date;
   month: number;
   year: number;
@@ -10,7 +10,7 @@ interface MonthPickerProps {
   maxDate?: Date;
 }
 
-interface MonthLimitProps {
+export interface MonthLimitProps {
   month?: Nulleable<number>;
   date?: Date;
   maxDate?: Date;

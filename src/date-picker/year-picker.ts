@@ -1,7 +1,7 @@
 import { COUNT_YEAR_RANGE } from './constants';
 import { YearPickerTemplate, YearState } from './models';
 
-interface YearPickerProps {
+export interface YearPickerProps {
   date: Date;
   year: number;
   minDate?: Date;

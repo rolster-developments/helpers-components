@@ -6,7 +6,7 @@ import {
 import { DAYS_WEEK } from './constants';
 import { DayState, WeekState } from './models';
 
-interface DayPickerProps {
+export interface DayPickerProps {
   date: Date;
   day: number;
   month: number;
