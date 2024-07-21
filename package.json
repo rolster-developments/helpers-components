@@ -1,6 +1,6 @@
 {
-  "name": "@rolster/helpers-components",
-  "version": "0.1.27",
+  "name": "@rolster/components",
+  "version": "0.2.0",
   "description": "Components utilities package compatible with Rolster projects.",
   "module": "dist/esm/index.js",
   "main": "dist/cjs/index.js",
@@ -26,9 +26,9 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@rolster/helpers-advanced": "^1.3.0",
-    "@rolster/helpers-date": "^1.4.6",
-    "@rolster/helpers-string": "^1.1.3"
+    "@rolster/commons": "^2.0.2",
+    "@rolster/dates": "^2.0.0",
+    "@rolster/strings": "^2.0.0"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^25.0.4",
@@ -53,5 +53,8 @@
     "typescript",
     "utilities",
     "components"
-  ]
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
 }

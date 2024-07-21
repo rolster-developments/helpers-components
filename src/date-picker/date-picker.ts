@@ -3,7 +3,7 @@ import {
   dateIsBefore,
   normalizeMaxTime,
   normalizeMinTime
-} from '@rolster/helpers-date';
+} from '@rolster/dates';
 
 export interface DateRangeProps {
   date: Date;

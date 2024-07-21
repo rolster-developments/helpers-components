@@ -1,4 +1,4 @@
-import { hasPattern } from '@rolster/helpers-string';
+import { hasPattern } from '@rolster/strings';
 import {
   AbstractAutocompleteElement as Element,
   StoreAutocomplete,

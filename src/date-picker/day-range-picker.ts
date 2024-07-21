@@ -4,7 +4,7 @@ import {
   dateIsBetween,
   getDateWeight,
   getDaysOfMonth
-} from '@rolster/helpers-date';
+} from '@rolster/dates';
 import { DayRangeState, WeekRangeState } from './models';
 import { DAYS_WEEK } from './constants';
 

@@ -2,7 +2,7 @@ import {
   dateIsEqualsWeight,
   getDateWeight,
   getDaysOfMonth
-} from '@rolster/helpers-date';
+} from '@rolster/dates';
 import { DAYS_WEEK } from './constants';
 import { DayState, WeekState } from './models';
 

@@ -1,5 +1,5 @@
-import { itIsDefined } from '@rolster/helpers-advanced';
-import { MONTH_NAMES, Month } from '@rolster/helpers-date';
+import { itIsDefined } from '@rolster/commons';
+import { MONTH_NAMES, Month } from '@rolster/dates';
 import { MonthLimitTemplate, MonthState } from './models';
 
 export interface MonthPickerProps {

@@ -1,4 +1,4 @@
-import { hasPattern } from '@rolster/helpers-string';
+import { hasPattern } from '@rolster/strings';
 
 export interface AbstractListElement<T = unknown> {
   description: string;
