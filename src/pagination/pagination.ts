@@ -34,11 +34,13 @@ export class PaginationController<T = any> {
   constructor(options: PaginationControllerOptions<T>) {
     const { suggestions, count, position } = options;
 
-    this.count = count || DEFAULT_COUNT_COLLECTION;
-    this.position = position ?? 0;
-
     this.suggestions = suggestions;
     this.collection = suggestions;
+
+    const index = position ?? 0;
+
+    this.position = index <= this.maxPage ? index : 0;
+    this.count = count || DEFAULT_COUNT_COLLECTION;
 
     const { page, template } = this.createPagination({
       collection: this.suggestions,
@@ -145,18 +147,14 @@ export class PaginationController<T = any> {
   }
 
   private createDescription(page: Page<T>): string {
-    const { collection, index } = page;
+    const start = page.index * this.count + MIN_NUMBER_PAGE;
+    let finish = (page.index + MIN_NUMBER_PAGE) * this.count;
 
-    const totalCount = this.suggestions.length;
-
-    const indexStart = index * this.count + MIN_NUMBER_PAGE;
-    let indexEnd = (index + MIN_NUMBER_PAGE) * this.count;
-
-    if (indexEnd > collection.length) {
-      indexEnd = collection.length;
+    if (finish > this.suggestions.length) {
+      finish = this.suggestions.length;
     }
 
-    return `${indexStart} - ${indexEnd} de ${totalCount}`;
+    return `${start} - ${finish} de ${this.suggestions.length}`;
   }
 
   private createTemplate(page: Page<T>): PaginationTemplate {
