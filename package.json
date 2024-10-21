@@ -1,6 +1,6 @@
 {
   "name": "@rolster/components",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Components utilities package compatible with Rolster projects.",
   "module": "dist/esm/index.js",
   "main": "dist/cjs/index.js",
@@ -26,7 +26,7 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@rolster/commons": "^2.0.2",
+    "@rolster/commons": "^2.0.5",
     "@rolster/dates": "^2.0.0",
     "@rolster/strings": "^2.0.0"
   },
