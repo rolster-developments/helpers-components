@@ -104,8 +104,8 @@ export class PaginationController<T = any> {
       : undefined;
   }
 
-  public goToPage(page: Page<T>): Pagination<T> {
-    return this.refreshForIndex(page.index);
+  public goToPage({ value }: PageState): Pagination<T> {
+    return this.refreshForIndex(value);
   }
 
   public filtrable(criteria?: FilterCriteria<T>): Pagination<T> {
