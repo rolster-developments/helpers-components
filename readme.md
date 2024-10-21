@@ -1,11 +1,11 @@
-# Rolster Helpers Components
+# Rolster Components
 
 Components utilities package compatible with Rolster projects.
 
 ## Installation
 
 ```
-npm i @rolster/helpers-components
+npm i @rolster/components
 ```
 
 ## Configuration
