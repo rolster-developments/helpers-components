@@ -136,9 +136,9 @@ export class PaginationController<T = any> {
     };
   }
 
-  private createPageState(value: number, index: number): PageState {
+  private createPageState(value: number): PageState {
     return {
-      active: index === this.position,
+      active: value === this.position,
       label: (value + 1).toString(),
       value
     };
@@ -177,11 +177,11 @@ export class PaginationController<T = any> {
     }
 
     let pagePrevious = undefined;
-    let currentPage = this.createPageState(0, index);
+    let currentPage = this.createPageState(0);
     const pages = [];
 
     for (let i = minIndexPage; i < maxPageVisible; i++) {
-      const page = this.createPageState(i, index);
+      const page = this.createPageState(i);
 
       if (page.value === index) {
         currentPage = page;
@@ -217,6 +217,8 @@ export class PaginationController<T = any> {
   }
 
   private refreshForIndex(index: number): Pagination<T> {
+    this.position = index;
+
     const pagination = this.createPagination({
       collection: this.collection,
       count: this.count,
@@ -225,7 +227,6 @@ export class PaginationController<T = any> {
 
     this.currentPage = pagination.page;
     this.currentTemplate = pagination.template;
-    this.position = index;
 
     return pagination;
   }
