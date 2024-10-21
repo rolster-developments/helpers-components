@@ -18,3 +18,8 @@ export interface PaginationTemplate {
   lastPage: boolean;
   pages: PageState[];
 }
+
+export interface Pagination<T> {
+  page: Page<T>;
+  template: PaginationTemplate;
+}

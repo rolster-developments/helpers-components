@@ -1,5 +1,5 @@
 import { FilterCriteria } from '../shared';
-import { Page, PageState, PaginationTemplate } from './models';
+import { Page, PageState, Pagination, PaginationTemplate } from './models';
 
 const DEFAULT_COUNT_COLLECTION = 20;
 const FIRST_PAGE = 0;
@@ -10,11 +10,6 @@ interface ControllerOptions<T = any> {
   collection: T[];
   count: number;
   index: number;
-}
-
-interface Pagination<T> {
-  page: Page<T>;
-  template: PaginationTemplate;
 }
 
 interface PaginationControllerOptions<T = any> {
@@ -107,6 +102,10 @@ export class PaginationController<T = any> {
     return this.collection.length
       ? this.refreshForIndex(this.maxPage - MIN_NUMBER_PAGE)
       : undefined;
+  }
+
+  public goToPage(page: Page<T>): Pagination<T> {
+    return this.refreshForIndex(page.index);
   }
 
   public filtrable(criteria?: FilterCriteria<T>): Pagination<T> {
