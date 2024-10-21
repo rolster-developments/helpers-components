@@ -8,3 +8,6 @@ export * from './date-picker/year-picker';
 export * from './list-field/autocomplete-field';
 export * from './list-field/box-field';
 export * from './list-field/models';
+export * from './pagination/models';
+export * from './pagination/pagination';
+export * from './shared';

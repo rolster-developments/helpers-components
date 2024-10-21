@@ -1,26 +1,26 @@
 import { hasPattern } from '@rolster/strings';
 import {
   AbstractAutocompleteElement as Element,
-  StoreAutocomplete,
-  StoreAutocompleteNull
+  AutocompleteStore,
+  AutocompleteStoreNulleable
 } from './models';
 
-interface FilterProps<T = unknown, E extends Element<T> = Element<T>> {
+interface FilterOptions<T = unknown, E extends Element<T> = Element<T>> {
   pattern: Nulleable<string>;
   suggestions: E[];
   reboot?: boolean;
-  store?: StoreAutocomplete<T, E>;
+  store?: AutocompleteStore<T, E>;
 }
 
 interface FilterResponse<T, E extends Element<T> = Element<T>> {
   collection: E[];
-  store: StoreAutocomplete<T, E>;
+  store: AutocompleteStore<T, E>;
 }
 
 function createEmptyStore<
   T = unknown,
   E extends Element<T> = Element<T>
->(): StoreAutocomplete<T, E> {
+>(): AutocompleteStore<T, E> {
   return {
     coincidences: undefined,
     pattern: '',
@@ -29,43 +29,46 @@ function createEmptyStore<
 }
 
 function searchForPattern<T = unknown, E extends Element<T> = Element<T>>(
-  props: FilterProps<T, E>
-): StoreAutocompleteNull<T, E> {
-  const { pattern, store } = props;
+  options: FilterOptions<T, E>
+): AutocompleteStoreNulleable<T, E> {
+  const { pattern, store } = options;
 
   if (!store?.pattern) {
     return null;
   }
 
-  let newStore: StoreAutocompleteNull<T, E> = store;
+  let finalStore: AutocompleteStoreNulleable<T, E> = store;
   let search = false;
 
-  while (!search && newStore) {
-    search = hasPattern(pattern || '', newStore.pattern, true);
+  while (!search && finalStore) {
+    search = hasPattern(pattern || '', finalStore.pattern, true);
 
     if (!search) {
-      newStore = newStore.previous;
+      finalStore = finalStore.previous;
     }
   }
 
-  return newStore || createEmptyStore();
+  return finalStore || createEmptyStore();
 }
 
 export function createStoreAutocomplete<
   T = unknown,
   E extends Element<T> = Element<T>
->(props: FilterProps<T, E>): FilterResponse<T, E> {
-  const { pattern, suggestions, reboot } = props;
+>(options: FilterOptions<T, E>): FilterResponse<T, E> {
+  const { pattern, suggestions, reboot } = options;
 
   if (!pattern) {
-    return { collection: suggestions, store: createEmptyStore() };
+    return {
+      collection: suggestions,
+      store: createEmptyStore()
+    };
   }
 
-  const store = reboot ? createEmptyStore<T, E>() : searchForPattern(props);
+  const store = reboot ? createEmptyStore<T, E>() : searchForPattern(options);
   const elements = store?.coincidences || suggestions;
 
   const coincidences = elements.filter((element) =>
-    element.hasCoincidence(pattern)
+    element.coincidence(pattern)
   );
 
   return {

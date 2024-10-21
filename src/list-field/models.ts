@@ -1,48 +1,52 @@
 import { hasPattern } from '@rolster/strings';
+import { FilterCriteria } from '../shared';
 
-export interface AbstractListElement<T = unknown> {
+export interface AbstractListElement<T = any> {
   description: string;
   value: T;
   compareTo(value: T): boolean;
+  filtrable(criteria: FilterCriteria<T>): boolean;
 }
 
-export interface AbstractAutocompleteElement<T = unknown>
+export interface AbstractAutocompleteElement<T = any>
   extends AbstractListElement<T> {
-  hasCoincidence(pattern: string): boolean;
+  coincidence(pattern: string): boolean;
 }
 
-export interface ListElement<T = unknown> extends AbstractListElement<T> {
+export interface ListElement<T = any> extends AbstractListElement<T> {
   title: string;
   code?: string;
+  icon?: string;
   img?: string;
   initials?: string;
   subtitle?: string;
 }
 
-export interface AutocompleteElement<T = unknown>
+export interface AutocompleteElement<T = any>
   extends AbstractAutocompleteElement<T> {
   title: string;
   code?: string;
+  icon?: string;
   img?: string;
   initials?: string;
   subtitle?: string;
 }
 
-export interface StoreAutocomplete<
+export interface AutocompleteStore<
   T,
   E extends AbstractAutocompleteElement<T> = AbstractAutocompleteElement<T>
 > {
   pattern: string;
-  previous: Nulleable<StoreAutocomplete<T, E>>;
+  previous: Nulleable<AutocompleteStore<T, E>>;
   coincidences?: E[];
 }
 
-export type StoreAutocompleteNull<
+export type AutocompleteStoreNulleable<
   T,
   E extends AbstractAutocompleteElement<T> = AbstractAutocompleteElement<T>
-> = StoreAutocomplete<T, E> | null;
+> = AutocompleteStore<T, E> | null;
 
-export class RolsterListElement<T = unknown> implements ListElement<T> {
+export class RolsterListElement<T = any> implements ListElement<T> {
   constructor(public readonly value: T) {}
 
   public get description(): string {
@@ -56,18 +60,22 @@ export class RolsterListElement<T = unknown> implements ListElement<T> {
   public compareTo(value: T): boolean {
     return value === this.value;
   }
+
+  public filtrable(criteria: FilterCriteria<T>): boolean {
+    return criteria.apply(this.value);
+  }
 }
 
-export class RolsterAutocompleteElement<T = unknown>
+export class RolsterAutocompleteElement<T = any>
   extends RolsterListElement<T>
   implements AutocompleteElement<T>
 {
-  public hasCoincidence(pattern: string): boolean {
+  public coincidence(pattern: string): boolean {
     return hasPattern(JSON.stringify(this.value), pattern, true);
   }
 }
 
-export class ListCollection<T = unknown> {
+export class ListCollection<T = any> {
   constructor(public readonly value: AbstractListElement<T>[]) {}
 
   public find(element: T): Undefined<AbstractListElement<T>> {
