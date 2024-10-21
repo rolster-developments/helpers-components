@@ -225,6 +225,7 @@ export class PaginationController<T = any> {
 
     this.currentPage = pagination.page;
     this.currentTemplate = pagination.template;
+    this.position = index;
 
     return pagination;
   }
