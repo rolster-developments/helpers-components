@@ -37,18 +37,18 @@ function searchForPattern<T = unknown, E extends Element<T> = Element<T>>(
     return null;
   }
 
-  let finalStore: AutocompleteStoreNulleable<T, E> = store;
+  let currentStore: AutocompleteStoreNulleable<T, E> = store;
   let search = false;
 
-  while (!search && finalStore) {
-    search = hasPattern(pattern || '', finalStore.pattern, true);
+  while (!search && currentStore) {
+    search = hasPattern(pattern || '', currentStore.pattern, true);
 
     if (!search) {
-      finalStore = finalStore.previous;
+      currentStore = currentStore.previous;
     }
   }
 
-  return finalStore || createEmptyStore();
+  return currentStore || createEmptyStore();
 }
 
 export function createStoreAutocomplete<

@@ -1,3 +1,4 @@
+const ELEMENT_CLASS = '.rls-field-list__element';
 const POSITION_INITIAL = 0;
 
 type Content = Nulleable<HTMLDivElement>;
@@ -40,8 +41,10 @@ function navigationInputDown(options: InputOptions): Undefined<number> {
     return undefined;
   }
 
-  if (list?.childNodes?.length) {
-    (list.childNodes.item(0) as HTMLLIElement).focus();
+  const elements = list?.querySelectorAll(ELEMENT_CLASS);
+
+  if (elements?.length) {
+    (elements.item(0) as HTMLLIElement).focus();
 
     setTimeout(() => {
       list?.scroll({ top: 0, behavior: 'smooth' });
@@ -58,17 +61,19 @@ function navigationInputUp(options: InputOptions): Undefined<number> {
     return undefined;
   }
 
-  if (!list?.childNodes?.length) {
+  const elements = list?.querySelectorAll(ELEMENT_CLASS);
+
+  if (!elements?.length) {
     return POSITION_INITIAL;
   }
 
-  const position = list.childNodes.length - 1;
-  const element = list.childNodes.item(position) as HTMLLIElement;
+  const position = elements.length - 1;
+  const element = elements.item(position) as HTMLLIElement;
 
   element.focus();
 
   setTimeout(() => {
-    list.scroll({
+    list?.scroll({
       top: element.offsetTop + element.offsetLeft,
       behavior: 'smooth'
     });
@@ -82,8 +87,10 @@ function navigationElementDown(options: ElementOptions): number {
 
   const nextPosition = position + 1;
 
-  if (list?.childNodes && nextPosition < list?.childNodes?.length) {
-    (list?.childNodes.item(nextPosition) as HTMLLIElement).focus();
+  const elements = list?.querySelectorAll(ELEMENT_CLASS);
+
+  if (elements && nextPosition < elements.length) {
+    (elements.item(nextPosition) as HTMLLIElement).focus();
 
     return nextPosition;
   }
@@ -98,10 +105,12 @@ function navigationElementDown(options: ElementOptions): number {
 function navigationElementUp(options: ElementOptions): number {
   const { content, input, list, position } = options;
 
-  if (list?.childNodes && position > 0) {
+  const elements = list?.querySelectorAll(ELEMENT_CLASS);
+
+  if (elements && position > 0) {
     const previousPosition = position - 1;
 
-    (list.childNodes.item(previousPosition) as HTMLLIElement).focus();
+    (elements.item(previousPosition) as HTMLLIElement).focus();
 
     return previousPosition;
   }
