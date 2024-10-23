@@ -1,31 +1,27 @@
-const CLASS_ELEMENT = '.rls-list-field__element';
 const POSITION_INITIAL = 0;
 
-type ContentElement = Nulleable<HTMLDivElement>;
-type InputElement = Nulleable<HTMLInputElement>;
-type ListElement = Nulleable<HTMLUListElement>;
+type Content = Nulleable<HTMLDivElement>;
+type Input = Nulleable<HTMLInputElement>;
+type UlList = Nulleable<HTMLUListElement>;
 
 interface InputOptions {
-  contentElement: ContentElement;
+  content: Content;
   event: KeyboardEvent;
-  listElement: ListElement;
+  list: UlList;
 }
 
 interface ElementOptions {
-  contentElement: ContentElement;
+  content: Content;
   event: KeyboardEvent;
-  inputElement: InputElement;
-  listElement: ListElement;
+  input: Input;
+  list: UlList;
   position: number;
 }
 
-export function locationListIsBottom(
-  contentElement: ContentElement,
-  listElement: ListElement
-): boolean {
-  if (contentElement && listElement) {
-    const { top, height } = contentElement.getBoundingClientRect();
-    const { clientHeight } = listElement;
+export function locationListCanBottom(content: Content, list: UlList): boolean {
+  if (content && list) {
+    const { top, height } = content.getBoundingClientRect();
+    const { clientHeight } = list;
 
     return top + height + clientHeight < window.innerHeight;
   }
@@ -33,20 +29,22 @@ export function locationListIsBottom(
   return true;
 }
 
-function navigationInputDown(options: InputOptions): Undefined<number> {
-  const { contentElement, listElement } = options;
+export function locationListCanTop(content: Content, list: UlList): boolean {
+  return !locationListCanBottom(content, list);
+}
 
-  if (!locationListIsBottom(contentElement, listElement)) {
+function navigationInputDown(options: InputOptions): Undefined<number> {
+  const { content, list } = options;
+
+  if (locationListCanTop(content, list)) {
     return undefined;
   }
 
-  const elements = listElement?.querySelectorAll<HTMLLIElement>(CLASS_ELEMENT);
-
-  if (elements?.length) {
-    elements.item(0).focus();
+  if (list?.childNodes?.length) {
+    (list.childNodes.item(0) as HTMLLIElement).focus();
 
     setTimeout(() => {
-      listElement?.scroll({ top: 0, behavior: 'smooth' });
+      list?.scroll({ top: 0, behavior: 'smooth' });
     }, 100);
   }
 
@@ -54,26 +52,24 @@ function navigationInputDown(options: InputOptions): Undefined<number> {
 }
 
 function navigationInputUp(options: InputOptions): Undefined<number> {
-  const { contentElement, listElement } = options;
+  const { content, list } = options;
 
-  if (locationListIsBottom(contentElement, listElement)) {
+  if (locationListCanBottom(content, list)) {
     return undefined;
   }
 
-  const elements = listElement?.querySelectorAll<HTMLLIElement>(CLASS_ELEMENT);
-
-  if (!elements?.length) {
+  if (!list?.childNodes?.length) {
     return POSITION_INITIAL;
   }
 
-  const position = elements.length - 1;
-  const element = elements.item(position);
+  const position = list.childNodes.length - 1;
+  const element = list.childNodes.item(position) as HTMLLIElement;
 
-  element?.focus();
+  element.focus();
 
   setTimeout(() => {
-    listElement?.scroll({
-      top: element?.offsetTop + element?.offsetLeft,
+    list.scroll({
+      top: element.offsetTop + element.offsetLeft,
       behavior: 'smooth'
     });
   }, 100);
@@ -82,47 +78,44 @@ function navigationInputUp(options: InputOptions): Undefined<number> {
 }
 
 function navigationElementDown(options: ElementOptions): number {
-  const { contentElement, inputElement, listElement, position } = options;
+  const { content, input, list, position } = options;
 
-  const elements = listElement?.querySelectorAll<HTMLLIElement>(CLASS_ELEMENT);
+  const nextPosition = position + 1;
 
-  const newPosition = position + 1;
+  if (list?.childNodes && nextPosition < list?.childNodes?.length) {
+    (list?.childNodes.item(nextPosition) as HTMLLIElement).focus();
 
-  if (newPosition < (elements?.length || 0)) {
-    elements?.item(newPosition)?.focus();
-
-    return newPosition;
+    return nextPosition;
   }
 
-  if (!locationListIsBottom(contentElement, listElement)) {
-    inputElement?.focus();
+  if (locationListCanTop(content, list)) {
+    input?.focus();
   }
 
   return position;
 }
 
 function navigationElementUp(options: ElementOptions): number {
-  const { contentElement, inputElement, listElement, position } = options;
+  const { content, input, list, position } = options;
 
-  if (position > 0) {
-    const elements =
-      listElement?.querySelectorAll<HTMLLIElement>(CLASS_ELEMENT);
+  if (list?.childNodes && position > 0) {
+    const previousPosition = position - 1;
 
-    const newPosition = position - 1;
+    (list.childNodes.item(previousPosition) as HTMLLIElement).focus();
 
-    elements?.item(newPosition)?.focus();
-
-    return newPosition;
+    return previousPosition;
   }
 
-  if (locationListIsBottom(contentElement, listElement)) {
-    inputElement?.focus();
+  if (locationListCanBottom(content, list)) {
+    input?.focus();
   }
 
   return POSITION_INITIAL;
 }
 
-export function listNavigationInput(options: InputOptions): Undefined<number> {
+export function navigationListFromInput(
+  options: InputOptions
+): Undefined<number> {
   switch (options.event.code) {
     case 'ArrowDown':
       return navigationInputDown(options);
@@ -133,7 +126,7 @@ export function listNavigationInput(options: InputOptions): Undefined<number> {
   }
 }
 
-export function listNavigationElement(options: ElementOptions): number {
+export function navigationListFromElement(options: ElementOptions): number {
   switch (options.event.code) {
     case 'ArrowDown':
       return navigationElementDown(options);
