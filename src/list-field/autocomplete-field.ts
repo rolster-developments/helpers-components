@@ -5,7 +5,7 @@ import {
   AutocompleteStoreNulleable
 } from './models';
 
-interface FilterOptions<T = unknown, E extends Element<T> = Element<T>> {
+interface FilterOptions<T = any, E extends Element<T> = Element<T>> {
   pattern: Nulleable<string>;
   suggestions: E[];
   reboot?: boolean;
@@ -18,7 +18,7 @@ interface FilterResponse<T, E extends Element<T> = Element<T>> {
 }
 
 function createEmptyStore<
-  T = unknown,
+  T = any,
   E extends Element<T> = Element<T>
 >(): AutocompleteStore<T, E> {
   return {
@@ -28,7 +28,7 @@ function createEmptyStore<
   };
 }
 
-function searchForPattern<T = unknown, E extends Element<T> = Element<T>>(
+function searchForPattern<T = any, E extends Element<T> = Element<T>>(
   options: FilterOptions<T, E>
 ): AutocompleteStoreNulleable<T, E> {
   const { pattern, store } = options;
@@ -51,8 +51,8 @@ function searchForPattern<T = unknown, E extends Element<T> = Element<T>>(
   return currentStore || createEmptyStore();
 }
 
-export function createStoreAutocomplete<
-  T = unknown,
+export function createAutocompleteStore<
+  T = any,
   E extends Element<T> = Element<T>
 >(options: FilterOptions<T, E>): FilterResponse<T, E> {
   const { pattern, suggestions, reboot } = options;
