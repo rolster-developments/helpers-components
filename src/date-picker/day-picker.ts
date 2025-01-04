@@ -6,7 +6,7 @@ import {
 import { DAYS_WEEK } from './constants';
 import { DayState, WeekState } from './models';
 
-export interface DayPickerProps {
+export interface DayPickerOptions {
   date: Date;
   day: number;
   month: number;
@@ -16,26 +16,24 @@ export interface DayPickerProps {
 }
 
 function createDayState(
-  props: DayPickerProps,
+  options: DayPickerOptions,
   today: Date,
   value?: number
 ): DayState {
-  const { date, day, month, year } = props;
-
-  const dateValue = value && new Date(year, month, value);
+  const dateValue = value && new Date(options.year, options.month, value);
 
   return {
-    disabled: dayIsOutside(props, value || 0),
-    focused: !!value && day === value,
+    disabled: dayIsOutside(options, value || 0),
+    focused: !!value && options.day === value,
     forbidden: !value,
-    selected: !!dateValue && dateIsEqualsWeight(date, dateValue),
+    selected: !!dateValue && dateIsEqualsWeight(options.date, dateValue),
     today: !!dateValue && dateIsEqualsWeight(today, dateValue),
     value
   };
 }
 
 function createFirstWeek(
-  props: DayPickerProps,
+  options: DayPickerOptions,
   date: Date,
   today: Date
 ): WeekState {
@@ -44,11 +42,11 @@ function createFirstWeek(
   let day = 1;
 
   for (let start = 0; start < date.getDay(); start++) {
-    days.push(createDayState(props, today));
+    days.push(createDayState(options, today));
   }
 
   for (let end = date.getDay(); end < 7; end++) {
-    days.push(createDayState(props, today, day));
+    days.push(createDayState(options, today, day));
 
     day++;
   }
@@ -57,7 +55,7 @@ function createFirstWeek(
 }
 
 function createDaysPending(
-  props: DayPickerProps,
+  options: DayPickerOptions,
   today: Date,
   days: number
 ): DayState[] {
@@ -65,14 +63,14 @@ function createDaysPending(
   const length = 7 - days;
 
   for (let index = 0; index < length; index++) {
-    daysPending.push(createDayState(props, today));
+    daysPending.push(createDayState(options, today));
   }
 
   return daysPending;
 }
 
 function createNextWeeks(
-  props: DayPickerProps,
+  options: DayPickerOptions,
   date: Date,
   today: Date
 ): WeekState[] {
@@ -84,7 +82,7 @@ function createNextWeeks(
   let day = DAYS_WEEK - date.getDay() + 1;
 
   do {
-    days.push(createDayState(props, today, day));
+    days.push(createDayState(options, today, day));
 
     day++;
     countDays++;
@@ -99,49 +97,51 @@ function createNextWeeks(
 
   if (days.length && days.length < DAYS_WEEK) {
     weeks.push({
-      days: [...days, ...createDaysPending(props, today, days.length)]
+      days: [...days, ...createDaysPending(options, today, days.length)]
     });
   }
 
   return weeks;
 }
 
-export function dayIsOutsideMin(props: DayPickerProps, day: number): boolean {
-  const { month, year, minDate } = props;
-
-  return minDate
-    ? getDateWeight(new Date(year, month, day)) < getDateWeight(minDate)
+export function dayIsOutsideMin(
+  options: DayPickerOptions,
+  day: number
+): boolean {
+  return options.minDate
+    ? getDateWeight(new Date(options.year, options.month, day)) <
+        getDateWeight(options.minDate)
     : false;
 }
 
-export function dayIsOutsideMax(props: DayPickerProps, day: number): boolean {
-  const { month, year, maxDate } = props;
-
-  return maxDate
-    ? getDateWeight(new Date(year, month, day)) > getDateWeight(maxDate)
+export function dayIsOutsideMax(
+  options: DayPickerOptions,
+  day: number
+): boolean {
+  return options.maxDate
+    ? getDateWeight(new Date(options.year, options.month, day)) >
+        getDateWeight(options.maxDate)
     : false;
 }
 
-export function dayIsOutside(props: DayPickerProps, day: number): boolean {
-  return dayIsOutsideMin(props, day) || dayIsOutsideMax(props, day);
+export function dayIsOutside(options: DayPickerOptions, day: number): boolean {
+  return dayIsOutsideMin(options, day) || dayIsOutsideMax(options, day);
 }
 
-export function checkDayPicker(props: DayPickerProps): Undefined<number> {
-  const { day, maxDate, minDate } = props;
-
-  return minDate && dayIsOutsideMin(props, day)
-    ? minDate.getDate()
-    : maxDate && dayIsOutsideMax(props, day)
-      ? maxDate.getDate()
+export function checkDayPicker(options: DayPickerOptions): Undefined<number> {
+  return options.minDate && dayIsOutsideMin(options, options.day)
+    ? options.minDate.getDate()
+    : options.maxDate && dayIsOutsideMax(options, options.day)
+      ? options.maxDate.getDate()
       : undefined;
 }
 
-export function createDayPicker(props: DayPickerProps) {
-  const date = new Date(props.year, props.month, 1);
+export function createDayPicker(options: DayPickerOptions) {
+  const date = new Date(options.year, options.month, 1);
   const today = new Date();
 
-  const firstWeek = createFirstWeek(props, date, today);
-  const nextWeeks = createNextWeeks(props, date, today);
+  const firstWeek = createFirstWeek(options, date, today);
+  const nextWeeks = createNextWeeks(options, date, today);
 
   return [firstWeek, ...nextWeeks];
 }

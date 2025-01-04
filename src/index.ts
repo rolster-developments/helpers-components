@@ -1,3 +1,4 @@
+export * from './commons';
 export * from './date-picker/date-picker';
 export * from './date-picker/day-picker';
 export * from './date-picker/day-range-picker';
@@ -10,4 +11,3 @@ export * from './list-field/box-field';
 export * from './list-field/models';
 export * from './pagination/models';
 export * from './pagination/pagination';
-export * from './shared';

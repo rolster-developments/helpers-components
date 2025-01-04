@@ -1,71 +1,65 @@
 import { COUNT_YEAR_RANGE } from './constants';
 import { YearPickerTemplate, YearState } from './models';
 
-export interface YearPickerProps {
+export interface YearPickerOptions {
   date: Date;
   year: number;
   minDate?: Date;
   maxDate?: Date;
 }
 
-function createYear(props: YearPickerProps, value?: number): YearState {
-  const { date, year } = props;
-
+function createYear(options: YearPickerOptions, value?: number): YearState {
   return {
     disabled: !value,
-    focused: value === year,
-    selected: value === date.getFullYear(),
+    focused: value === options.year,
+    selected: value === options.date.getFullYear(),
     value
   };
 }
 
-export function yearIsOutlineMin(props: YearPickerProps): boolean {
-  const { year, minDate } = props;
-
-  return minDate ? year < minDate.getFullYear() : false;
+export function yearIsOutlineMin(options: YearPickerOptions): boolean {
+  return options.minDate ? options.year < options.minDate.getFullYear() : false;
 }
 
-export function yearIsOutlineMax(props: YearPickerProps): boolean {
-  const { year, maxDate } = props;
-
-  return maxDate ? year > maxDate.getFullYear() : false;
+export function yearIsOutlineMax(options: YearPickerOptions): boolean {
+  return options.maxDate ? options.year > options.maxDate.getFullYear() : false;
 }
 
-export function yearIsOutside(props: YearPickerProps): boolean {
+export function yearIsOutside(props: YearPickerOptions): boolean {
   return yearIsOutlineMin(props) || yearIsOutlineMax(props);
 }
 
-export function checkYearPicker(props: YearPickerProps): Undefined<number> {
-  const { maxDate, minDate } = props;
-
-  return minDate && yearIsOutlineMin(props)
-    ? minDate.getFullYear()
-    : maxDate && yearIsOutlineMax(props)
-      ? maxDate.getFullYear()
+export function verifyYearPicker(
+  options: YearPickerOptions
+): Undefined<number> {
+  return options.minDate && yearIsOutlineMin(options)
+    ? options.minDate.getFullYear()
+    : options.maxDate && yearIsOutlineMax(options)
+      ? options.maxDate.getFullYear()
       : undefined;
 }
 
-export function createYearPicker(props: YearPickerProps): YearPickerTemplate {
-  const { year, maxDate, minDate } = props;
-
+export function createYearPicker(
+  options: YearPickerOptions
+): YearPickerTemplate {
   const prevYears: YearState[] = [];
   const nextYears: YearState[] = [];
 
-  let minRange = year;
-  let maxRange = year;
+  let minRange = options.year;
+  let maxRange = options.year;
 
-  const minYear = minDate?.getFullYear() || 0;
-  const maxYear = maxDate?.getFullYear() || 10000;
+  const minYear = options.minDate?.getFullYear() || 0;
+  const maxYear = options.maxDate?.getFullYear() || 10000;
 
   for (let index = 0; index < COUNT_YEAR_RANGE; index++) {
-    const prevValue = year - COUNT_YEAR_RANGE + index;
-    const nextValue = year + index + 1;
+    const prevValue = options.year - COUNT_YEAR_RANGE + index;
+    const nextValue = options.year + index + 1;
 
     const prevYear = prevValue >= minYear ? prevValue : undefined;
     const nextYear = nextValue <= maxYear ? nextValue : undefined;
 
-    const prevState = createYear(props, prevYear);
-    const nextState = createYear(props, nextYear);
+    const prevState = createYear(options, prevYear);
+    const nextState = createYear(options, nextYear);
 
     prevYears.push(prevState);
     nextYears.push(nextState);
@@ -79,7 +73,7 @@ export function createYearPicker(props: YearPickerProps): YearPickerTemplate {
     }
   }
 
-  const yearCenter = createYear(props, year);
+  const yearCenter = createYear(options, options.year);
 
   return {
     canPrevious: minYear < minRange,

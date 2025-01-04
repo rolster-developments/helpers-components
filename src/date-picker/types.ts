@@ -1,6 +1,6 @@
 import { DateRange } from '@rolster/dates';
 
-export enum PickerListenerType {
+export enum PickerListenerEvent {
   Select = 'PickerSelect',
   Now = 'PickerNow',
   Cancel = 'PickerCancel'
@@ -9,6 +9,6 @@ export enum PickerListenerType {
 type PickerValue = DateRange | Date | number;
 
 export interface PickerListener<D extends PickerValue> {
-  type: PickerListenerType;
+  event: PickerListenerEvent;
   value?: D;
 }

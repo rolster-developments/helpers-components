@@ -22,9 +22,8 @@ interface ElementOptions {
 export function locationListCanBottom(content: Content, list: UlList): boolean {
   if (content && list) {
     const { top, height } = content.getBoundingClientRect();
-    const { clientHeight } = list;
 
-    return top + height + clientHeight < window.innerHeight;
+    return top + height + list.clientHeight < window.innerHeight;
   }
 
   return true;
@@ -35,19 +34,17 @@ export function locationListCanTop(content: Content, list: UlList): boolean {
 }
 
 function navigationInputDown(options: InputOptions): Undefined<number> {
-  const { content, list } = options;
-
-  if (locationListCanTop(content, list)) {
+  if (locationListCanTop(options.content, options.list)) {
     return undefined;
   }
 
-  const elements = list?.querySelectorAll(ELEMENT_CLASS);
+  const elements = options.list?.querySelectorAll(ELEMENT_CLASS);
 
   if (elements?.length) {
     (elements.item(0) as HTMLLIElement).focus();
 
     setTimeout(() => {
-      list?.scroll({ top: 0, behavior: 'smooth' });
+      options.list?.scroll({ top: 0, behavior: 'smooth' });
     }, 100);
   }
 
@@ -55,13 +52,11 @@ function navigationInputDown(options: InputOptions): Undefined<number> {
 }
 
 function navigationInputUp(options: InputOptions): Undefined<number> {
-  const { content, list } = options;
-
-  if (locationListCanBottom(content, list)) {
+  if (locationListCanBottom(options.content, options.list)) {
     return undefined;
   }
 
-  const elements = list?.querySelectorAll(ELEMENT_CLASS);
+  const elements = options.list?.querySelectorAll(ELEMENT_CLASS);
 
   if (!elements?.length) {
     return POSITION_INITIAL;
@@ -73,7 +68,7 @@ function navigationInputUp(options: InputOptions): Undefined<number> {
   element.focus();
 
   setTimeout(() => {
-    list?.scroll({
+    options.list?.scroll({
       top: element.offsetTop + element.offsetLeft,
       behavior: 'smooth'
     });
@@ -83,11 +78,9 @@ function navigationInputUp(options: InputOptions): Undefined<number> {
 }
 
 function navigationElementDown(options: ElementOptions): number {
-  const { content, input, list, position } = options;
+  const nextPosition = options.position + 1;
 
-  const nextPosition = position + 1;
-
-  const elements = list?.querySelectorAll(ELEMENT_CLASS);
+  const elements = options.list?.querySelectorAll(ELEMENT_CLASS);
 
   if (elements && nextPosition < elements.length) {
     (elements.item(nextPosition) as HTMLLIElement).focus();
@@ -95,28 +88,26 @@ function navigationElementDown(options: ElementOptions): number {
     return nextPosition;
   }
 
-  if (locationListCanTop(content, list)) {
-    input?.focus();
+  if (locationListCanTop(options.content, options.list)) {
+    options.input?.focus();
   }
 
-  return position;
+  return options.position;
 }
 
 function navigationElementUp(options: ElementOptions): number {
-  const { content, input, list, position } = options;
+  const elements = options.list?.querySelectorAll(ELEMENT_CLASS);
 
-  const elements = list?.querySelectorAll(ELEMENT_CLASS);
-
-  if (elements && position > 0) {
-    const previousPosition = position - 1;
+  if (elements && options.position > 0) {
+    const previousPosition = options.position - 1;
 
     (elements.item(previousPosition) as HTMLLIElement).focus();
 
     return previousPosition;
   }
 
-  if (locationListCanBottom(content, list)) {
-    input?.focus();
+  if (locationListCanBottom(options.content, options.list)) {
+    options.input?.focus();
   }
 
   return POSITION_INITIAL;

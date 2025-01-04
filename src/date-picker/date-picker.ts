@@ -5,34 +5,34 @@ import {
   normalizeMinTime
 } from '@rolster/dates';
 
-export interface DateRangeProps {
+export interface DateRangeOptions {
   date: Date;
   maxDate?: Date;
   minDate?: Date;
 }
 
-export function dateIsOutRangeMin(props: DateRangeProps): boolean {
-  const { date, minDate } = props;
-
-  return !!minDate && dateIsBefore(normalizeMinTime(minDate), date);
+export function dateIsOutRangeMin(options: DateRangeOptions): boolean {
+  return (
+    !!options.minDate &&
+    dateIsBefore(normalizeMinTime(options.minDate), options.date)
+  );
 }
 
-export function dateIsOutRangeMax(props: DateRangeProps): boolean {
-  const { date, maxDate } = props;
-
-  return !!maxDate && dateIsAfter(normalizeMaxTime(maxDate), date);
+export function dateIsOutRangeMax(options: DateRangeOptions): boolean {
+  return (
+    !!options.maxDate &&
+    dateIsAfter(normalizeMaxTime(options.maxDate), options.date)
+  );
 }
 
-export function dateOutRange(props: DateRangeProps): boolean {
-  return dateIsOutRangeMin(props) || dateIsOutRangeMax(props);
+export function dateOutRange(options: DateRangeOptions): boolean {
+  return dateIsOutRangeMin(options) || dateIsOutRangeMax(options);
 }
 
-export function checkDateRange(props: DateRangeProps): Date {
-  const { date, maxDate, minDate } = props;
-
-  return minDate && dateIsOutRangeMax(props)
-    ? minDate
-    : maxDate && dateIsOutRangeMax(props)
-      ? maxDate
-      : date;
+export function checkDateRange(options: DateRangeOptions): Date {
+  return options.minDate && dateIsOutRangeMax(options)
+    ? options.minDate
+    : options.maxDate && dateIsOutRangeMax(options)
+      ? options.maxDate
+      : options.date;
 }

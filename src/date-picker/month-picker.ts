@@ -2,7 +2,7 @@ import { itIsDefined } from '@rolster/commons';
 import { MONTH_NAMES, Month } from '@rolster/dates';
 import { MonthLimitTemplate, MonthState } from './models';
 
-export interface MonthPickerProps {
+export interface MonthPickerOptions {
   date: Date;
   month: number;
   year: number;
@@ -17,110 +17,109 @@ export interface MonthLimitProps {
   minDate?: Date;
 }
 
-function createMonthState(props: MonthPickerProps, value: number): MonthState {
-  const { date, month, year } = props;
-
+function createMonthState(
+  options: MonthPickerOptions,
+  value: number
+): MonthState {
   return {
-    disabled: monthIsOutside(props, value),
-    focused: value === month,
+    disabled: monthIsOutside(options, value),
+    focused: value === options.month,
     label: MONTH_NAMES()[value],
-    selected: date.getFullYear() === year && value === date.getMonth(),
+    selected:
+      options.date.getFullYear() === options.year &&
+      value === options.date.getMonth(),
     value
   };
 }
 
 export function monthIsOutsideMin(
-  props: MonthPickerProps,
+  options: MonthPickerOptions,
   month: number
 ): boolean {
-  const { year, minDate } = props;
-
-  return minDate
-    ? minDate.getFullYear() === year && month < minDate.getMonth()
+  return options.minDate
+    ? options.minDate.getFullYear() === options.year &&
+        month < options.minDate.getMonth()
     : false;
 }
 
 export function monthIsOutsideMax(
-  props: MonthPickerProps,
+  options: MonthPickerOptions,
   month: number
 ): boolean {
-  const { year, maxDate } = props;
-
-  return maxDate
-    ? maxDate.getFullYear() === year && month > maxDate.getMonth()
+  return options.maxDate
+    ? options.maxDate.getFullYear() === options.year &&
+        month > options.maxDate.getMonth()
     : false;
 }
 
 export function monthIsOutside(
-  props: MonthPickerProps,
+  options: MonthPickerOptions,
   month: number
 ): boolean {
-  return monthIsOutsideMin(props, month) || monthIsOutsideMax(props, month);
+  return monthIsOutsideMin(options, month) || monthIsOutsideMax(options, month);
 }
 
-export function checkMonthPicker(props: MonthPickerProps): Undefined<number> {
-  const { maxDate, minDate, month } = props;
-
-  return minDate && monthIsOutsideMin(props, month)
-    ? minDate.getMonth()
-    : maxDate && monthIsOutsideMax(props, month)
-      ? maxDate.getMonth()
+export function verifyMonthPicker(
+  options: MonthPickerOptions
+): Undefined<number> {
+  return options.minDate && monthIsOutsideMin(options, options.month)
+    ? options.minDate.getMonth()
+    : options.maxDate && monthIsOutsideMax(options, options.month)
+      ? options.maxDate.getMonth()
       : undefined;
 }
 
-export function createMonthPicker(props: MonthPickerProps): MonthState[] {
+export function createMonthPicker(options: MonthPickerOptions): MonthState[] {
   return [
-    createMonthState(props, Month.January),
-    createMonthState(props, Month.February),
-    createMonthState(props, Month.March),
-    createMonthState(props, Month.April),
-    createMonthState(props, Month.May),
-    createMonthState(props, Month.June),
-    createMonthState(props, Month.July),
-    createMonthState(props, Month.August),
-    createMonthState(props, Month.September),
-    createMonthState(props, Month.October),
-    createMonthState(props, Month.November),
-    createMonthState(props, Month.December)
+    createMonthState(options, Month.January),
+    createMonthState(options, Month.February),
+    createMonthState(options, Month.March),
+    createMonthState(options, Month.April),
+    createMonthState(options, Month.May),
+    createMonthState(options, Month.June),
+    createMonthState(options, Month.July),
+    createMonthState(options, Month.August),
+    createMonthState(options, Month.September),
+    createMonthState(options, Month.October),
+    createMonthState(options, Month.November),
+    createMonthState(options, Month.December)
   ];
 }
 
 type MinMonthLimitProps = Omit<MonthLimitProps, 'maxDate'>;
 type MaxMonthLimitProps = Omit<MonthLimitProps, 'minDate'>;
 
-export function monthIsLimitMin(props: MinMonthLimitProps): boolean {
-  const { month, date, minDate } = props;
+export function monthIsLimitMin(options: MinMonthLimitProps): boolean {
+  if (itIsDefined(options.month) && options.date) {
+    const minYear = options.minDate ? options.minDate.getFullYear() : 0;
+    const minMonth = options.minDate ? options.minDate.getMonth() : 0;
 
-  if (itIsDefined(month) && date) {
-    const minYear = minDate ? minDate.getFullYear() : 0;
-    const minMonth = minDate ? minDate.getMonth() : 0;
-
-    return date.getFullYear() === minYear && month <= minMonth;
+    return options.date.getFullYear() === minYear && options.month <= minMonth;
   }
 
   return false;
 }
 
-export function monthIsLimitMax(props: MaxMonthLimitProps): boolean {
-  const { month, date, maxDate } = props;
+export function monthIsLimitMax(options: MaxMonthLimitProps): boolean {
+  if (itIsDefined(options.month) && options.date) {
+    const maxYear = options.maxDate ? options.maxDate.getFullYear() : 10000;
+    const maxMonth = options.maxDate ? options.maxDate.getMonth() : 11;
 
-  if (itIsDefined(month) && date) {
-    const maxYear = maxDate ? maxDate.getFullYear() : 10000;
-    const maxMonth = maxDate ? maxDate.getMonth() : 11;
-
-    return date.getFullYear() === maxYear && month >= maxMonth;
+    return options.date.getFullYear() === maxYear && options.month >= maxMonth;
   }
 
   return false;
 }
 
-export function monthIsLimit(props: MaxMonthLimitProps): boolean {
-  return monthIsLimitMin(props) || monthIsLimitMax(props);
+export function monthIsLimit(options: MaxMonthLimitProps): boolean {
+  return monthIsLimitMin(options) || monthIsLimitMax(options);
 }
 
-export function monthLimitTemplate(props: MonthLimitProps): MonthLimitTemplate {
+export function monthLimitTemplate(
+  options: MonthLimitProps
+): MonthLimitTemplate {
   return {
-    limitNext: monthIsLimitMax(props),
-    limitPrevious: monthIsLimitMin(props)
+    limitNext: monthIsLimitMax(options),
+    limitPrevious: monthIsLimitMin(options)
   };
 }

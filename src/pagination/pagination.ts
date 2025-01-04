@@ -1,4 +1,4 @@
-import { FilterCriteria } from '../shared';
+import { FilterCriteria } from '../commons';
 import { Page, PageState, Pagination, PaginationTemplate } from './models';
 
 const DEFAULT_COUNT_COLLECTION = 20;
@@ -32,15 +32,13 @@ export class PaginationController<T = any> {
   private currentPage: Page<T>;
 
   constructor(options: PaginationControllerOptions<T>) {
-    const { suggestions, count, position } = options;
+    this.suggestions = options.suggestions;
+    this.collection = options.suggestions;
 
-    this.suggestions = suggestions;
-    this.collection = suggestions;
-
-    const index = position ?? 0;
+    const index = options.position ?? 0;
 
     this.position = index <= this.maxPage ? index : 0;
-    this.count = count || DEFAULT_COUNT_COLLECTION;
+    this.count = options.count || DEFAULT_COUNT_COLLECTION;
 
     const { page, template } = this.createPagination({
       collection: this.suggestions,

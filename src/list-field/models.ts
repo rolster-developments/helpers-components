@@ -1,5 +1,5 @@
-import { hasPattern } from '@rolster/strings';
-import { FilterCriteria } from '../shared';
+import { coincidence } from '@rolster/strings';
+import { FilterCriteria } from '../commons';
 
 export interface AbstractListElement<T = any> {
   description: string;
@@ -71,7 +71,7 @@ export class RolsterAutocompleteElement<T = any>
   implements AutocompleteElement<T>
 {
   public coincidence(pattern: string): boolean {
-    return hasPattern(JSON.stringify(this.value), pattern, true);
+    return coincidence(JSON.stringify(this.value), pattern, true);
   }
 }
 

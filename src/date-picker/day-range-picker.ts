@@ -8,7 +8,7 @@ import {
 import { DayRangeState, WeekRangeState } from './models';
 import { DAYS_WEEK } from './constants';
 
-export interface DayRangePickerProps {
+export interface DayRangePickerOptions {
   date: Date;
   range: DateRange;
   sourceDate: Date;
@@ -25,7 +25,7 @@ function dateIsSelected(base: Date, date: Date, day: number): boolean {
 }
 
 function sourceIsSelected(
-  { sourceDate }: DayRangePickerProps,
+  { sourceDate }: DayRangePickerOptions,
   base: Date,
   day: number
 ): boolean {
@@ -33,7 +33,7 @@ function sourceIsSelected(
 }
 
 function rangeIsSelected(
-  { range }: DayRangePickerProps,
+  { range }: DayRangePickerOptions,
   base: Date,
   day: number
 ): boolean {
@@ -44,7 +44,7 @@ function rangeIsSelected(
 }
 
 function dayIsRange(
-  { range }: DayRangePickerProps,
+  { range }: DayRangePickerOptions,
   base: Date,
   day: number
 ): boolean {
@@ -56,22 +56,22 @@ function dayIsRange(
 }
 
 function createDayRangeState(
-  props: DayRangePickerProps,
+  options: DayRangePickerOptions,
   base: Date,
   day?: number
 ): DayRangeState {
   return {
-    disabled: dayRangeIsOutside(props, day || 0),
-    end: day ? rangeIsSelected(props, base, day) : false,
+    disabled: dayRangeIsOutside(options, day || 0),
+    end: day ? rangeIsSelected(options, base, day) : false,
     forbidden: !day,
-    ranged: day ? dayIsRange(props, base, day) : false,
-    source: day ? sourceIsSelected(props, base, day) : false,
+    ranged: day ? dayIsRange(options, base, day) : false,
+    source: day ? sourceIsSelected(options, base, day) : false,
     value: day
   };
 }
 
 function createFirstWeek(
-  props: DayRangePickerProps,
+  options: DayRangePickerOptions,
   base: Date
 ): WeekRangeState {
   const days: DayRangeState[] = [];
@@ -79,11 +79,11 @@ function createFirstWeek(
   let day = 1;
 
   for (let start = 0; start < base.getDay(); start++) {
-    days.push(createDayRangeState(props, base));
+    days.push(createDayRangeState(options, base));
   }
 
   for (let end = base.getDay(); end < 7; end++) {
-    days.push(createDayRangeState(props, base, day));
+    days.push(createDayRangeState(options, base, day));
 
     day++;
   }
@@ -92,7 +92,7 @@ function createFirstWeek(
 }
 
 function createDaysPending(
-  props: DayRangePickerProps,
+  options: DayRangePickerOptions,
   base: Date,
   days: number
 ): DayRangeState[] {
@@ -100,27 +100,29 @@ function createDaysPending(
   const length = 7 - days;
 
   for (let index = 0; index < length; index++) {
-    daysPending.push(createDayRangeState(props, base));
+    daysPending.push(createDayRangeState(options, base));
   }
 
   return daysPending;
 }
 
 function createNextWeeks(
-  props: DayRangePickerProps,
+  options: DayRangePickerOptions,
   base: Date
 ): WeekRangeState[] {
   const weeks: WeekRangeState[] = [];
-  const { date } = props;
 
-  const dayCount = getDaysOfMonth(date.getFullYear(), date.getMonth());
+  const dayCount = getDaysOfMonth(
+    options.date.getFullYear(),
+    options.date.getMonth()
+  );
 
   let days: DayRangeState[] = [];
   let countDays = 1;
   let day = DAYS_WEEK - base.getDay() + 1;
 
   do {
-    days.push(createDayRangeState(props, date, day));
+    days.push(createDayRangeState(options, options.date, day));
 
     day++;
     countDays++;
@@ -135,7 +137,7 @@ function createNextWeeks(
 
   if (days.length && days.length < DAYS_WEEK) {
     weeks.push({
-      days: [...days, ...createDaysPending(props, base, days.length)]
+      days: [...days, ...createDaysPending(options, base, days.length)]
     });
   }
 
@@ -143,39 +145,39 @@ function createNextWeeks(
 }
 
 export function dayRangeIsOutsideMin(
-  props: DayRangePickerProps,
+  options: DayRangePickerOptions,
   day: number
 ): boolean {
-  const { date, minDate } = props;
-
-  return minDate
-    ? getDateWeight(assignDayInDate(date, day)) < getDateWeight(minDate)
+  return options.minDate
+    ? getDateWeight(assignDayInDate(options.date, day)) <
+        getDateWeight(options.minDate)
     : false;
 }
 
 export function dayRangeIsOutsideMax(
-  props: DayRangePickerProps,
+  options: DayRangePickerOptions,
   day: number
 ): boolean {
-  const { date, maxDate } = props;
-
-  return maxDate
-    ? getDateWeight(assignDayInDate(date, day)) > getDateWeight(maxDate)
+  return options.maxDate
+    ? getDateWeight(assignDayInDate(options.date, day)) >
+        getDateWeight(options.maxDate)
     : false;
 }
 
 export function dayRangeIsOutside(
-  props: DayRangePickerProps,
+  options: DayRangePickerOptions,
   day: number
 ): boolean {
-  return dayRangeIsOutsideMin(props, day) || dayRangeIsOutsideMax(props, day);
+  return (
+    dayRangeIsOutsideMin(options, day) || dayRangeIsOutsideMax(options, day)
+  );
 }
 
-export function createDayRangePicker(props: DayRangePickerProps) {
-  const date = new Date(props.date.getFullYear(), props.date.getMonth(), 1);
+export function createDayRangePicker(options: DayRangePickerOptions) {
+  const date = new Date(options.date.getFullYear(), options.date.getMonth(), 1);
 
-  const firstWeek = createFirstWeek(props, date);
-  const nextWeeks = createNextWeeks(props, date);
+  const firstWeek = createFirstWeek(options, date);
+  const nextWeeks = createNextWeeks(options, date);
 
   return [firstWeek, ...nextWeeks];
 }

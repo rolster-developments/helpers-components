@@ -1,4 +1,4 @@
-import { hasPattern } from '@rolster/strings';
+import { coincidence } from '@rolster/strings';
 import {
   AbstractAutocompleteElement as Element,
   AutocompleteStore,
@@ -31,17 +31,15 @@ function createEmptyStore<
 function searchForPattern<T = any, E extends Element<T> = Element<T>>(
   options: FilterOptions<T, E>
 ): AutocompleteStoreNulleable<T, E> {
-  const { pattern, store } = options;
-
-  if (!store?.pattern) {
+  if (!options.store?.pattern) {
     return null;
   }
 
-  let currentStore: AutocompleteStoreNulleable<T, E> = store;
+  let currentStore: AutocompleteStoreNulleable<T, E> = options.store;
   let search = false;
 
   while (!search && currentStore) {
-    search = hasPattern(pattern || '', currentStore.pattern, true);
+    search = coincidence(options.pattern || '', currentStore.pattern, true);
 
     if (!search) {
       currentStore = currentStore.previous;
