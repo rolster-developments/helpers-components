@@ -128,7 +128,7 @@ export function dayIsOutside(options: DayPickerOptions, day: number): boolean {
   return dayIsOutsideMin(options, day) || dayIsOutsideMax(options, day);
 }
 
-export function checkDayPicker(options: DayPickerOptions): Undefined<number> {
+export function verifyDayPicker(options: DayPickerOptions): Undefined<number> {
   return options.minDate && dayIsOutsideMin(options, options.day)
     ? options.minDate.getDate()
     : options.maxDate && dayIsOutsideMax(options, options.day)

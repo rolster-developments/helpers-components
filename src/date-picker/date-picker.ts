@@ -29,7 +29,7 @@ export function dateOutRange(options: DateRangeOptions): boolean {
   return dateIsOutRangeMin(options) || dateIsOutRangeMax(options);
 }
 
-export function checkDateRange(options: DateRangeOptions): Date {
+export function verifyDateRange(options: DateRangeOptions): Date {
   return options.minDate && dateIsOutRangeMax(options)
     ? options.minDate
     : options.maxDate && dateIsOutRangeMax(options)
